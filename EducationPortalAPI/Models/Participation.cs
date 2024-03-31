@@ -6,5 +6,6 @@
         public int UserID { get; set; }
         public int EducationID { get; set; }
         public bool RequestStatus { get; set; }
+        public bool CompletionStatus { get; set; }
     }
 }

@@ -11,10 +11,9 @@ namespace EducationPortalAPI.DAL
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<Category> Categories { get; set; }
         public DbSet<Education> Educations { get; set; }
         public DbSet<EducationContent> EducationContents { get; set; }
-        public DbSet<Instructor> Instructors { get; set; }
         public DbSet<Participation> Participations { get; set; }
+
     }
 }

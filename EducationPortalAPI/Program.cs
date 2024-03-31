@@ -26,8 +26,12 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-    .AddIdentityCookies();
+builder.Services.AddDbContext<AppDbContext>(opt =>
+          opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAuthorization();
+
+builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
 
 builder.Services.AddAuthorizationBuilder();
 
@@ -35,10 +39,6 @@ builder.Services.AddIdentityCore<User>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddApiEndpoints();
 
-builder.Services.AddDbContext<AppDbContext>(opt =>
-          opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddAuthorization();
 
 
 var app = builder.Build();
