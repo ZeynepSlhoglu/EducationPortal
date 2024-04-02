@@ -7,11 +7,18 @@ using System.Security.Claims;
 using System.Text;
 using Newtonsoft.Json;
 using EducationPortalUI.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EducationPortalUI.Controllers
 {
+    [Authorize]
     public class EducationController : Controller
     {
+        public IActionResult Create()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Index()
         {
             var userId = "";
@@ -114,11 +121,6 @@ namespace EducationPortalUI.Controllers
             {
                 throw new Exception($"Bir hata oluştu: {ex.Message}");
             }
-        }
-
-        public IActionResult CreateEducation()
-        {
-            return View();
         }
 
 
