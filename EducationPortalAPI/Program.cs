@@ -3,11 +3,14 @@ using EducationPortalAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Globalization;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // Add services to the container.
 
@@ -26,6 +29,19 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:7145",
+                                              "https://localhost:7026")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                      });
+});
+ 
+
 builder.Services.AddDbContext<AppDbContext>(opt =>
           opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -35,13 +51,35 @@ builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerSche
 
 builder.Services.AddAuthorizationBuilder();
 
-builder.Services.AddIdentityCore<User>()
+builder.Services.AddIdentityCore<User>( opt =>
+{
+    opt.User.RequireUniqueEmail = true;
+})
     .AddEntityFrameworkStores<AppDbContext>()
     .AddApiEndpoints();
-
-
+ 
 
 var app = builder.Build();
+
+app.MapPost("/logout", async (SignInManager<User> signInManager) =>
+{
+    await signInManager.SignOutAsync().ConfigureAwait(false);
+}).RequireAuthorization();
+
+app.MapPost("/userinfo", (ClaimsPrincipal user) =>
+{
+    var userId = user.FindFirstValue(ClaimTypes.NameIdentifier); 
+    var email = user.FindFirstValue(ClaimTypes.Email); 
+    var name = user.FindFirstValue(ClaimTypes.Name); 
+
+    return Results.Json(new
+    {
+        UserId = userId,  
+        Email = email,
+        Name = name
+    });
+}).RequireAuthorization();
+ 
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -60,6 +98,8 @@ app.Use(async (context, next) =>
     var a = context.Response.StatusCode;
     await next();
 });
+
+app.UseCors(MyAllowSpecificOrigins);
 
 var cultureInfo = new CultureInfo("tr-TR");
 

@@ -54,6 +54,26 @@ namespace EducationPortalAPI.Controllers
             }
         }
 
+        [HttpGet("GetEducation")]
+        public async Task<IActionResult> GetEducation(string id)
+        {
+            try
+            {
+                var educations = await _appDbContext.Educations.Where(e => e.UserId == id).ToListAsync();
+
+                if (educations != null && educations.Any())
+                    return Ok(educations);
+                else
+                    return NotFound($"{id} nolu id'ye ait eğitim kaydı bulunmamaktadır.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+
         [HttpPost]
         public async Task<IActionResult> Create(Education model)
         {

@@ -1,0 +1,87 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml"; ViewData["Title"] = "Kayıt Sayfası";
+}
+<div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+<div class="col-lg-7">
+    <div class="p-5">
+        <div class="text-center">
+            <h1 class="h4 text-gray-900 mb-4">Yeni hesap aç!</h1>
+        </div>
+        <div class="form-group row">
+            <input type="text" class="form-control form-control-user" id="inputUserNameRegister" placeholder="Kullanıcı adı">
+        </div>
+        <div class="form-group">
+            <label>
+                <input type="checkbox" id="isEducator">
+                Eğitimci misiniz?
+            </label>
+        </div>
+        <div class="info form-group row">
+        </div>
+        <div class="form-group row">
+            <input type="email" class="form-control form-control-user" id="inputEmailRegister" placeholder="E-mail adresiniz">
+        </div>
+        <div class="form-group row">
+            <input type="password" class="form-control form-control-user" id="inputPasswordRegister" placeholder="Şifre">
+        </div>
+        <button id="registerBtn" class="btn btn-primary btn-user btn-block"> Kayıt Ol </button>
+        <hr>
+        <div class="text-center">
+            <a class="small" href="/Login">Zaten hesabın var mı? Giriş yap!</a>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+
+        $(document).ready(function () {
+            $('#isEducator').change(function () {
+                var isChecked = $(this).is(':checked');
+
+                if (isChecked) {
+                    $('.info').each(function () {
+                        $(this).append('<select id="instructorInfo" class="form-control">' +
+                            '<option value="">Seçiniz</option>' +
+                            '<option value="İç Eğitmen">İç Eğitmen</option>' +
+                            '<option value="Dış Eğitmen">Dış Eğitmen</option>' +
+                            '</select>');
+                    });
+                } else {
+                    $('#isEducator').remove();
+                }
+
+            });
+        });
+
+        $('#registerBtn').click(() => {
+            var username = $('#inputUserNameRegister').val();
+            var instructorstatus = $('#isEducator').is(':checked') ? 1 : 0;
+            var instructorinfo = $('#instructorInfo option:selected').text();;
+            var email = $('#inputEmailRegister').val();
+            var password = $('#inputPasswordRegister').val();
+            $.ajax({
+                url: 'https://localhost:7145/register',
+                method: 'POST',
+                contentType: "application/json",
+                data: JSON.stringify({
+                    username: username,
+                    instructorstatus: instructorstatus,
+                    instructorinfo: instructorinfo,
+                    email: email,
+                    password: password
+                }),
+                success: function (response) {
+                    var tokenType = response.tokenType;
+                    var accessToken = response.accessToken;
+                    localStorage.setItem('tokenType', tokenType);
+                    localStorage.setItem('accessToken', accessToken);
+                    Swal.fire("Başarılı", "Giriş yaptınız!", "success");
+                    window.location.href = "/Home";
+                },
+                error: function (e) {
+                    Swal.fire("Hata", e.responseText, "error");
+                }
+            });
+        });
+    </script>
+}

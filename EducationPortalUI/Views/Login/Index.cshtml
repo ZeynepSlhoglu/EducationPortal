@@ -1,0 +1,89 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Giriş Sayfası";
+
+}
+<div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+<div class="col-lg-6">
+    <div class="p-5">
+        <div class="text-center">
+            <h1 class="h4 text-gray-900 mb-4">Tekrar Hoş Geldiniz!</h1>
+        </div>
+        <div class="form-group">
+            <input type="email" class="form-control form-control-user"
+                   id="inputEmail" aria-describedby="emailHelp"
+                   placeholder="E-mail adresinizi giriniz...">
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control form-control-user"
+                   id="inputPassword" placeholder="Şifre">
+        </div>
+
+        <button class="btn btn-primary btn-user btn-block" id="loginBtn">
+            Giriş
+        </button>
+        <hr>
+        <div class="text-center">
+            <a class="small" href="/Register">Kayıt Ol!</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+
+        $('#loginBtn').click(() => {
+            debugger;
+            var email = $('#inputEmail').val();
+            var password = $('#inputPassword').val();
+
+            // $.ajax({
+            //     url: 'https://localhost:7145/login',
+            //     method: 'POST',
+            //     contentType: "application/json",  
+            //     data: JSON.stringify({  
+            //         email: email,
+            //         password: password
+            //     }),
+            //     success: function (response) {
+            //         var tokenType = response.tokenType;
+            //         var accessToken = response.accessToken;
+
+            //         localStorage.setItem('tokenType', tokenType);
+            //         localStorage.setItem('accessToken', accessToken);
+
+            //         Swal.fire("Başarılı", "Giriş yaptınız!", "success");
+            //         window.location.href = "/Home";
+            //     },
+            //     error: function (e) {
+            //         alert('Hata: ' + e.responseText);
+            //     }
+            // });
+
+            $.ajax({
+                url: '/Login/Index',
+                method: 'POST', 
+                data: {
+                    email: email,
+                    password: password
+                },
+                success: function (response) { 
+                    var accessToken = response.accessToken; 
+
+                    localStorage.setItem('accessToken', accessToken);
+
+                    // Redirect the user to the specified URL
+                    window.location.href = response.redirectUrl;
+                },
+                error: function (e) {
+                    alert('Hata: ' + e.responseText);
+                }
+            });
+        });
+
+
+
+
+    </script>
+}
