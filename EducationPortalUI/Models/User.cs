@@ -7,7 +7,5 @@ namespace EducationPortalUI.Models
     {
         public string Email { get; set; }
         public string Password { get; set; }
-        public bool? InstructorStatus { get; set; }
-        public string? InstructorInfo { get; set; }
     }
 }

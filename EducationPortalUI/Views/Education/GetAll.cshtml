@@ -1,0 +1,82 @@
+﻿@model IEnumerable<EducationPortalUI.Models.Education>
+@{
+    Layout = "~/Views/Shared/_LayoutHome.cshtml";
+    ViewData["Title"] = "Tüm Eğitimler";
+}
+
+
+@foreach (var education in Model)
+{
+    <div class="col-md-4 mb-4">
+
+        <div class="card border-left-primary shadow h-100 py-2">
+
+            <div class="card-body">
+
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            @education.Title
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Fiyat : ₺@education.Price</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Süre (Saat): @education.Duration</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Kapasite: @education.Capacity Kişi</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Kategori: @education.CategoryName</div>
+                    </div>
+                    @if (User.FindFirst("instructorStatus").Value == "False")
+                    {
+                    <div class="col-auto">
+                        <button data-id="@education.ID" class="btn btn-primary joinButton">Katıl</button>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+
+            $(".joinButton").click(function () { 
+                   
+                var educationId = $(this).data("id");
+
+                var userId = localStorage.getItem("userId");
+
+                var accessToken = localStorage.getItem("accessToken");
+
+                var buttonText = $(this).text();
+
+                var data = {
+                    UserID: userId,
+                    EducationID: educationId,
+                    RequestStatus: true,
+                    CompletionStatus: false
+                };
+
+                $.ajax({
+                    url: 'https://localhost:7145/api/Participation',
+                    method: 'POST',
+                    data: JSON.stringify(data),
+                    processData: false,
+                    contentType: 'application/json',
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                    },
+                    success: function (response) {
+                        Swal.fire("Başarılı", "Eğitim başarıyla kaydoldundu.", "success");
+                        window.location.reload();
+                    },
+                    error: function (e) {
+                        Swal.fire("Hata", e.responseText, "error");
+                    }
+                });
+            });
+
+
+        });
+    </script>
+
+}

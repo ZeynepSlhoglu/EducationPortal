@@ -61,10 +61,8 @@ namespace EducationPortalAPI.Controllers
             {
                 var educations = await _appDbContext.Educations.Where(e => e.UserId == id).ToListAsync();
 
-                if (educations != null && educations.Any())
                     return Ok(educations);
-                else
-                    return NotFound($"{id} nolu id'ye ait eğitim kaydı bulunmamaktadır.");
+              
             }
             catch (Exception ex)
             {
@@ -81,7 +79,7 @@ namespace EducationPortalAPI.Controllers
             {
                 _appDbContext.Add(model);
                 await _appDbContext.SaveChangesAsync();
-                return Ok("Kayıt eklendi");
+                return Ok(model.ID);
             }
             catch (Exception ex)
             {

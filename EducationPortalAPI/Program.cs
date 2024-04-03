@@ -3,11 +3,13 @@ using EducationPortalAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Globalization;
 using System.Security.Claims;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -40,7 +42,8 @@ builder.Services.AddCors(options =>
                           .AllowAnyMethod();
                       });
 });
- 
+
+
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
           opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -61,25 +64,38 @@ builder.Services.AddIdentityCore<User>( opt =>
 
 var app = builder.Build();
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/Uploads"
+});
+
 app.MapPost("/logout", async (SignInManager<User> signInManager) =>
 {
     await signInManager.SignOutAsync().ConfigureAwait(false);
 }).RequireAuthorization();
 
-app.MapPost("/userinfo", (ClaimsPrincipal user) =>
+app.MapPost("/userinfo", async (ClaimsPrincipal user, UserManager<User> userManager) =>
 {
     var userId = user.FindFirstValue(ClaimTypes.NameIdentifier); 
     var email = user.FindFirstValue(ClaimTypes.Email); 
-    var name = user.FindFirstValue(ClaimTypes.Name); 
+    var name = user.FindFirstValue(ClaimTypes.Name);
+
+    var appUser = await userManager.FindByIdAsync(userId);
+    var instructorStatus = appUser?.InstructorStatus;
+    var instructorInfo = appUser?.InstructorInfo;
 
     return Results.Json(new
     {
         UserId = userId,  
         Email = email,
-        Name = name
+        Name = name,
+        InstructorStatus = instructorStatus,
+        InstructorInfo = instructorInfo 
     });
 }).RequireAuthorization();
- 
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -105,6 +121,8 @@ var cultureInfo = new CultureInfo("tr-TR");
 
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+app.UseStaticFiles(); 
 
 app.MapIdentityApi<User>();
 

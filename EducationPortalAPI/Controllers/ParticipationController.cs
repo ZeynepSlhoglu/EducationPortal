@@ -37,12 +37,14 @@ namespace EducationPortalAPI.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("GetParticipationById/{id}")]
+        public async Task<IActionResult> Get(string id)
         {
             try
             {
-                var Participation = await _appDbContext.Participations.FindAsync(id);
+                var Participation = await _appDbContext.Participations
+                                    .Where(p => p.UserID == id)
+                                    .ToListAsync();
                 if (Participation is not null)
                     return Ok(Participation);
                 else
@@ -86,19 +88,33 @@ namespace EducationPortalAPI.Controllers
             return Ok("Kullanıcı güncellendi");
         }
 
-
-        [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
+        [HttpPost("delete")]
+        public async Task<IActionResult> Delete([FromBody] DeleteRequestModel requestModel)
         {
-            var Participation = await _appDbContext.Participations.FindAsync(id);
-            if (Participation is not null)
+            var userId = requestModel.UserId;
+            var educationId = requestModel.EducationId;
+
+            var participationsToDelete = await _appDbContext.Participations
+                                            .Where(p => p.UserID == userId && p.EducationID == educationId)
+                                            .ToListAsync();
+
+            if (participationsToDelete.Any())
             {
-                _appDbContext.Participations.Remove(Participation);
+                _appDbContext.Participations.RemoveRange(participationsToDelete);
                 await _appDbContext.SaveChangesAsync();
                 return Ok("Kayıt silindi");
             }
             else
-                return NotFound($"{id} id'li kayıt bulunmamaktadır.");
+            {
+                return NotFound($"Kullanıcı {userId} ve eğitim {educationId} ile ilgili kayıt bulunmamaktadır.");
+            }
         }
+
+        public class DeleteRequestModel
+        {
+            public string UserId { get; set; }
+            public int EducationId { get; set; }
+        }
+
     }
 }

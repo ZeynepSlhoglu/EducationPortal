@@ -60,17 +60,13 @@ $('#logout').on('click', function (event) {
     debugger;
     $.ajax({
         url: '/Login/Logout',
-        method: 'POST',
-        data: {
-            accessToken: accessToken
-        },
+        method: 'GET',
         success: function (response) {
             localStorage.removeItem('accessToken');
-
+            window.location.href = '/Login/Index';
         },
         error: function (e) {
             alert('Hata: ' + e.responseText);
         }
     });
-     
 });

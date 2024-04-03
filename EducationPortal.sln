@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationPortalAPI", "EducationPortalAPI\EducationPortalAPI.csproj", "{E0A90D63-2351-48CC-A07F-9EC461FAE02A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EducationPortalUI", "EducationPortalUI\EducationPortalUI.csproj", "{6F2CB9D0-0BAD-45F4-91E9-D96202B14BFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EducationPortalUI", "EducationPortalUI\EducationPortalUI.csproj", "{6F2CB9D0-0BAD-45F4-91E9-D96202B14BFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

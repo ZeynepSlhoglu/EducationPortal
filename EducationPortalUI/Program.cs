@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Extensions.FileProviders;
-
+using Microsoft.Extensions.FileProviders; 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -16,21 +15,18 @@ builder.Services.AddCors(options =>
                                               "https://localhost:7026")
                           .AllowAnyHeader()
                           .AllowAnyMethod();
-                      });
+                      }); 
 });
-
+  
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.ExpireTimeSpan = TimeSpan.FromDays(365.25 * 2);
+        options.ExpireTimeSpan = TimeSpan.FromHours(2);
         options.SlidingExpiration = true;
         options.LoginPath = "/Login";
         options.AccessDeniedPath = "/";
         options.ReturnUrlParameter = "/Home";
     });
-
-
-
 
 
 var app = builder.Build();
@@ -50,8 +46,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseCors(MyAllowSpecificOrigins);
-
+app.UseCors(MyAllowSpecificOrigins); 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -62,5 +57,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
  
 app.Run();

@@ -2,3 +2,152 @@
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
     ViewData["Title"] = "Eğitimlerim";
 }
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-body">
+            <div class="form-validation">
+
+
+                <div class="form-group row">
+                    <label class="col-lg-4 col-form-label" for="title">
+                        Eğitim Başlığı <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-lg-6">
+                        <input type="text" class="form-control" name="title" id="title" placeholder=".Net Eğitimi" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-4 col-form-label" for="val-category">
+                        Eğitim Kategorisi <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="form-control" id="val-category" name="val-category">
+                            <option value="">Seçiniz</option>
+                            <option value="online">Online</option>
+                            <option value="sinifici">Sınıf İçi</option>
+                            <option value="egitim">Eğitim</option>
+                            <option value="kitap">Kitap</option>
+                            <option value="sunum">Sunum</option>
+                            <option value="makale">Makale</option>
+                            <option value="miniproje">Mini proje</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-4 col-form-label" for="inf-educator">
+                        Eğitim Bilgisi <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-lg-6">
+                        <select class="form-control" id="inf-educator" name="inf-educator">
+                            <option value="">Seçiniz</option>
+                            <option value="İç Eğitmen">İç Eğitmen</option>
+                            <option value="Dış Eğitmen">Dış Eğitmen</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-4 col-form-label" for="capacity">
+                        Kontenjan Sayısı <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-lg-6">
+                        <input type="number" min="0" step="any" class="form-control" id="capacity" name="capacity" placeholder="Kontenjan sayısını giriniz..">
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <label class="col-lg-4 col-form-label" for="price">
+                        Para Birimi (Türk Lirası) ₺ <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-lg-6">
+                        <input type="number" min="0.00" max="10000.00" step="0.01" class="form-control" name="price" id="price" pattern="^\d+(\.\d{1,2})?$" placeholder="100₺" required>
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <label class="col-lg-4 col-form-label" for="duration">
+                        Eğitim Süresi (Saat) <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-lg-6">
+                        <input type="number" min="0" step="any" class="form-control" id="duration" name="duration" placeholder="Eğitim süresini giriniz ..">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-lg-4 col-form-label" for="duration">
+                        Eğitim İçeriği <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-lg-6">
+                        <div class="custom-file"> 
+                            <input class="form-control form-control-sm" id="educationContent" accept=".pdf, .mp4" type="file">
+                           @*   <label for="educationContent" class="custom-file-label">Dosya Seç</label>
+                            <input class="form-control form-control-sm" id="educationContent" accept=".pdf, .mp4" type="file"> *@
+                        </div>
+                    </div>
+                </div> 
+                
+                <div class="form-group row">
+                    <div class="col-lg-8 ml-auto">
+                        <button type="submit" id="educationSubmitBtn" class="btn btn-primary">Gönder</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+
+        $("#educationSubmitBtn").click(function (e) {
+            e.preventDefault();
+
+            var userId = localStorage.getItem("userId");
+            var title = $("#title").val();
+            var category = $("#val-category").val();
+            var educator = $("#inf-educator").val();
+            var capacity = $("#capacity").val();
+            var price = $("#price").val();
+            var duration = $("#duration").val();
+            var fileInput = $('#educationContent')[0].files[0];
+
+            var formData = new FormData();
+            formData.append('file', fileInput);
+            formData.append("Title", title);
+            formData.append("CategoryName", category);
+            formData.append("Capacity", capacity);
+            formData.append("Price", price);
+            formData.append("Duration", duration);
+            formData.append("UserId", userId);
+             
+            var accessToken = localStorage.getItem("accessToken");
+
+            $.ajax({
+                url: 'https://localhost:7145/api/EducationContent/UploadFile',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function (xhr) {
+                    // İstek başlığına token ekleyin
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
+                },
+                success: function (response) {
+                    Swal.fire("Başarılı", "Eğitim başarıyla kaydedildi.", "success");
+                    window.location.reload();
+                },
+                error: function (e) {
+                    Swal.fire("Hata", e.responseText, "error");
+                }
+            });
+        });
+
+ 
+        
+    </script>
+}

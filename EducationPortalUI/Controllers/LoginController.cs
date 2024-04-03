@@ -55,14 +55,16 @@ namespace EducationPortalUI.Controllers
                             var userInfoJson = JObject.Parse(userInfoResponseBody);
                             var userId = (string)userInfoJson["userId"];
                             var email = (string)userInfoJson["email"];
-                            var name = (string)userInfoJson["name"]; 
+                            var name = (string)userInfoJson["name"];
+                            var instructorStatus = (string)userInfoJson["instructorStatus"]; 
 
                             var claims = new List<Claim>
                     {
                         new Claim(ClaimTypes.NameIdentifier, userId),
                         new Claim(ClaimTypes.Email, email),
                         new Claim(ClaimTypes.Name, name),
-                        new Claim("Token", accessToken)
+                        new Claim("Token", accessToken),
+                        new Claim("instructorStatus", instructorStatus)
                     };
 
                             ClaimsIdentity claimsIdentity = new(
@@ -79,7 +81,7 @@ namespace EducationPortalUI.Controllers
                                 new ClaimsPrincipal(claimsIdentity),
                                 authProperties);
 
-                            return Json(new { success = true, redirectUrl = "/Home", accessToken = accessToken }); 
+                            return Json(new { success = true, redirectUrl = "/Home", accessToken = accessToken, userId = userId });
                         }
                         else
                         {
@@ -99,45 +101,14 @@ namespace EducationPortalUI.Controllers
 
             return View(model);
         }
+ 
 
-
-        [HttpPost]
-        public async Task<IActionResult> Logout(string accessToken)
+        [HttpGet]
+        public async Task<IActionResult> Logout()
         {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                { 
-                    string jsonBody = "{}";  
-                    var body = new StringContent(jsonBody, Encoding.UTF8, "application/json");
-                     
-                    var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7145/logout");
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken); 
-                    request.Content = body;  
-
-                    // Gönderilen isteği işle
-                    HttpResponseMessage response = await client.SendAsync(request);
-
-
-                    if (response.IsSuccessStatusCode)
-                    {
-                        await HttpContext.SignOutAsync(); 
-                        return RedirectToAction("Index", "Login");
-                    }
-                    else
-                    { 
-                        ViewBag.ErrorMessage = "Logout request failed with status code: " + response.StatusCode;
-                        return View("Error");  
-                    }
-                }
-            }
-            catch (Exception ex)
-            { 
-                ViewBag.ErrorMessage = ex.Message;
-                return View("Error");  
-            }
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Login");
         }
-
 
     }
 }
