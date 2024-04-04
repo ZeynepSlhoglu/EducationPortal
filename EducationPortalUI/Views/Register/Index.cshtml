@@ -53,10 +53,10 @@
             });
         });
 
-        $('#registerBtn').click(() => {
-            var username = $('#inputUserNameRegister').val();
-            var instructorstatus = $('#isEducator').is(':checked') ? 1 : 0;
-            var instructorinfo = $('#instructorInfo option:selected').text();;
+        $('#registerBtn').click(() => { 
+            localStorage.removeItem('tokenType');
+            localStorage.removeItem('accessToken');
+            var username = $('#inputUserNameRegister').val(); 
             var email = $('#inputEmailRegister').val();
             var password = $('#inputPasswordRegister').val();
             $.ajax({
@@ -64,9 +64,7 @@
                 method: 'POST',
                 contentType: "application/json",
                 data: JSON.stringify({
-                    username: username,
-                    instructorstatus: instructorstatus,
-                    instructorinfo: instructorinfo,
+                    username: username, 
                     email: email,
                     password: password
                 }),

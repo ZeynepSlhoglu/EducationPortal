@@ -64,7 +64,7 @@ namespace EducationPortalUI.Controllers
                         new Claim(ClaimTypes.Email, email),
                         new Claim(ClaimTypes.Name, name),
                         new Claim("Token", accessToken),
-                        new Claim("instructorStatus", instructorStatus)
+                        new Claim("instructorStatus", instructorStatus ?? "")
                     };
 
                             ClaimsIdentity claimsIdentity = new(
