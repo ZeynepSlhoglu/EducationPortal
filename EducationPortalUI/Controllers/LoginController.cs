@@ -73,9 +73,10 @@ namespace EducationPortalUI.Controllers
                             AuthenticationProperties authProperties = new()
                             {
                                 ExpiresUtc = DateTime.UtcNow.AddYears(2),
-                                IssuedUtc = DateTime.UtcNow
+                                IssuedUtc = DateTime.UtcNow,
+                                AllowRefresh = true
                             };
-
+                        
                             await HttpContext.SignInAsync(
                                 CookieAuthenticationDefaults.AuthenticationScheme,
                                 new ClaimsPrincipal(claimsIdentity),
@@ -86,6 +87,8 @@ namespace EducationPortalUI.Controllers
                         else
                         {
                             Console.WriteLine($"Error: {userInfoResponse.StatusCode}");
+                            return Json(new { success = false, redirectUrl = "/"});
+
                         }
                     }
                 }

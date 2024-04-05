@@ -40,8 +40,7 @@
             $('.completed, .joinButton').on('click', function () {
                 var accessToken = localStorage.getItem('accessToken');
                 var userId = localStorage.getItem('userId');
-                var educationId = $(this).data('id');
-                debugger;
+                var educationId = $(this).data('id'); 
                 var requestData = {
                     userId: userId,
                     educationId: educationId
@@ -53,7 +52,7 @@
                         'Authorization': 'Bearer ' + accessToken
                     },
                     contentType: 'application/json',
-                    data: JSON.stringify(requestData), // Veriyi JSON formatına dönüştür
+                    data: JSON.stringify(requestData),  
                     success: function (response) {
                         window.location.reload();
                         console.log('İstek başarıyla gönderildi.');
@@ -66,8 +65,7 @@
 
             $('.viewAll').on('click', function () {
                 var accessToken = localStorage.getItem('accessToken');
-                var educationId = $(this).data('id');
-                debugger;
+                var educationId = $(this).data('id'); 
                 $.ajax({
                     url: 'https://localhost:7145/api/EducationContent/GetEducationContent?id=' + educationId,
                     type: 'GET',  
@@ -75,8 +73,7 @@
                         'Authorization': 'Bearer ' + accessToken
                     },
                     contentType: 'application/json',
-                    success: function (response) {
-                        debugger;
+                    success: function (response) { 
                         window.open("https://localhost:7145/" + response.contentPath, "_blank");
 
                         console.log('İstek başarıyla gönderildi.');

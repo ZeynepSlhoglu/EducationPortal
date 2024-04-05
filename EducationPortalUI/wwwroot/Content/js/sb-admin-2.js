@@ -56,8 +56,7 @@
 })(jQuery); // End of use strict
 
 $('#logout').on('click', function (event) {
-    var accessToken = localStorage.getItem('accessToken');
-    debugger;
+    var accessToken = localStorage.getItem('accessToken'); 
     $.ajax({
         url: '/Login/Logout',
         method: 'GET',

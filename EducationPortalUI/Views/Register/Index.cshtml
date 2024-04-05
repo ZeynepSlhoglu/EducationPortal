@@ -10,14 +10,7 @@
         <div class="form-group row">
             <input type="text" class="form-control form-control-user" id="inputUserNameRegister" placeholder="Kullanıcı adı">
         </div>
-        <div class="form-group">
-            <label>
-                <input type="checkbox" id="isEducator">
-                Eğitimci misiniz?
-            </label>
-        </div>
-        <div class="info form-group row">
-        </div>
+     
         <div class="form-group row">
             <input type="email" class="form-control form-control-user" id="inputEmailRegister" placeholder="E-mail adresiniz">
         </div>
@@ -34,24 +27,6 @@
 @section Scripts {
     <script>
 
-        $(document).ready(function () {
-            $('#isEducator').change(function () {
-                var isChecked = $(this).is(':checked');
-
-                if (isChecked) {
-                    $('.info').each(function () {
-                        $(this).append('<select id="instructorInfo" class="form-control">' +
-                            '<option value="">Seçiniz</option>' +
-                            '<option value="İç Eğitmen">İç Eğitmen</option>' +
-                            '<option value="Dış Eğitmen">Dış Eğitmen</option>' +
-                            '</select>');
-                    });
-                } else {
-                    $('#isEducator').remove();
-                }
-
-            });
-        });
 
         $('#registerBtn').click(() => { 
             localStorage.removeItem('tokenType');

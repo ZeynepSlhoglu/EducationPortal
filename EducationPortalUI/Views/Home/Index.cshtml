@@ -2,8 +2,103 @@
     Layout = "~/Views/Shared/_LayoutHome.cshtml";
 
     ViewData["Title"] = "Ana Sayfa";
+    var a = User.FindFirst("instructorStatus").Value;
+
+}
+@if (User.FindFirst("instructorStatus").Value != "")
+{
+    <div class="text-center">
+        <h1 class="display-4">Hoşgeldin</h1>
+    </div>
+
+}
+else
+{
+    <button id="openModalButton" style="display: none;" data-toggle="modal" data-target="#exampleModal"></button>
+
+    <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Eğitimci misin?</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>
+                            Eğitimci misiniz?
+                            (Eğitimci iseniz tekrar giriş yapmanız gerekir.)
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary yes">Evet</button>
+                    <button type="button" class="btn btn-danger no" data-dismiss="modal">Hayır</button>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
-<div class="text-center">
-    <h1 class="display-4">Hoşgeldin</h1> 
-</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Trigger the modal on page load
+            $('#openModalButton').click();
+        });
+
+        $(document).ready(function () {
+            // Event handlers for "Yes" and "No" buttons in the modal
+            $('.yes').on('click', function () {
+                updateUserStatus(true);
+            });
+
+            $('.no').on('click', function () {
+                updateUserStatus(false);
+            });
+        });
+
+        function updateUserStatus(status) {
+            var Id = localStorage.getItem("userId");
+            var accessToken = localStorage.getItem("accessToken");
+
+            // Check if Id and accessToken are present
+            if (!Id || !accessToken) {
+                console.error("Id or accessToken is missing.");
+                return;
+            }
+
+            $.ajax({
+                url: 'https://localhost:7145/api/User/update/' + Id + '/' + status,
+                type: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken
+                }, 
+                success: function (response) {
+                    $('#exampleModal').modal('hide');
+                    @{
+
+                    }
+                    $.ajax({
+                        url: '/Home/UpdateInfo',
+                        type: 'POST', 
+                        success: function (response) {
+                            $('#exampleModal').modal('hide');
+                                window.location.href = response.redirectUrl;
+                            console.log(response);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(error);
+                        }
+                    }); 
+
+                    
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        }
+    </script>
+}

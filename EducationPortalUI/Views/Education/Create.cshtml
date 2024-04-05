@@ -133,8 +133,7 @@
                 data: formData,
                 processData: false,
                 contentType: false,
-                beforeSend: function (xhr) {
-                    // İstek başlığına token ekleyin
+                beforeSend: function (xhr) { 
                     xhr.setRequestHeader('Authorization', 'Bearer ' + accessToken);
                 },
                 success: function (response) {

@@ -54,20 +54,20 @@ namespace EducationPortalAPI.Controllers
             }
         }
 
-        [HttpPost("update")]
-        public async Task<IActionResult> Update(User model)
+        [HttpPost("update/{id}/{instructorStatus}")]
+        public async Task<IActionResult> Update(string id, bool instructorStatus)
         {
-            if (model is null)
-                return BadRequest("Eklenecek kullanıcı verisi bulunamadı.");
+            var user = await _appDbContext.Users.FindAsync(id);
+            if (user is null)
+                return NotFound($"{id} ID'li kullanıcı bulunamadı.");
 
-            var User = await _appDbContext.Users.FindAsync(model.Id);
-            if (User is null)
-                return NotFound($"{model.Id} id'li kullanıcı bulunmamaktadır.");
+            user.InstructorStatus = instructorStatus;
 
-            User.UserName = model.UserName;
             await _appDbContext.SaveChangesAsync();
-            return Ok("kullanıcı güncellendi");
+
+            return Ok("Kullanıcı güncellendi.");
         }
+
 
 
         [HttpDelete]

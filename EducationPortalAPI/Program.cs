@@ -82,6 +82,7 @@ app.MapPost("/userinfo", async (ClaimsPrincipal user, UserManager<User> userMana
     var email = user.FindFirstValue(ClaimTypes.Email); 
     var name = user.FindFirstValue(ClaimTypes.Name);
 
+
     var appUser = await userManager.FindByIdAsync(userId);
     var instructorStatus = appUser?.InstructorStatus;
     var instructorInfo = appUser?.InstructorInfo;
