@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: ./EducationPortalAPI
+    ports:
+      - "7145:7145"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./EducationPortalAPI/Uploads:/app/Uploads
+
+  ui:
+    build:
+      context: .
+      dockerfile: EducationPortalUI/Dockerfile
+    ports:
+      - "7026:7026"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - api
